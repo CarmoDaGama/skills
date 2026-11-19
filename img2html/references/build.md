@@ -37,7 +37,7 @@ Measure from the image instead of guessing:
 Fonts come before any fine-tuning of sizes:
 
 ```
-uv run ~/.agents/skills/img2html/scripts/fonts.py reference.png review/fonts.png --box 52,40,210,72 --text "JARVIS" \
+uv run <this skill>/scripts/fonts.py reference.png review/fonts.png --box 52,40,210,72 --text "JARVIS" \
   --fonts "Inter,Manrope,Jost,Turret Road,Michroma" --size 24 --spacing 0.5em
 ```
 
@@ -60,7 +60,7 @@ When a layer is an image (a background scene, an illustration, a photo, a comple
 1. Crop the region of the reference into `assets/crops/<name>.png`.
 2. Generate in parallel, one request per asset, with the `openrouter-img` skill:
    ```
-   uv run ~/.agents/skills/openrouter-img/scripts/generate_image.py --prompt "…" --input-image assets/crops/<name>.png \
+   uv run <this skill>/../openrouter-img/scripts/generate_image.py --prompt "…" --input-image assets/crops/<name>.png \
      --filename assets/<name>.png --model gpt2 --resolution 2K --aspect-ratio 16:9 &
    …
    wait
@@ -68,7 +68,7 @@ When a layer is an image (a background scene, an illustration, a photo, a comple
    - Backgrounds and plates: "the same scene without the panels / text / UI, same framing", never with UI text.
    - Icons and objects to cut out: "transparent background, no padding, no frame".
 3. A plate that must sit exactly under the page goes back in place with
-   `uv run ~/.agents/skills/img2html/scripts/align.py reference.png assets/<name>.png assets/<name>.png --mask x,y,w,h` (it finds the shift and
+   `uv run <this skill>/scripts/align.py reference.png assets/<name>.png assets/<name>.png --mask x,y,w,h` (it finds the shift and
    scale that best match the reference, and keeps the reference's pixels outside the mask when given).
 4. Only regenerate the assets that failed.
 
@@ -87,8 +87,8 @@ When a layer is an image (a background scene, an illustration, a photo, a comple
 ## Final review
 
 ```
-uv run ~/.agents/skills/video2html/scripts/snap.py http://localhost:8000/index.html review/final.png --shot --wait 3
-uv run ~/.agents/skills/video2html/scripts/compare.py reference.png review/final.png review/final
+uv run <this skill>/scripts/snap.py http://localhost:8000/index.html review/final.png --shot --wait 3
+uv run <this skill>/scripts/compare.py reference.png review/final.png review/final
 ```
 
 Send `review/final/side-by-side.jpg`, the mean difference, and the remaining differences from `steps.md`.

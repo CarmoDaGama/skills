@@ -1,0 +1,6 @@
+interface:
+  display_name: "Draw Wireframe"
+  short_description: "Wireframe cinza de dashboard, site ou app desenhado por script"
+  default_prompt: "Use $draw-wireframe: desenhe um wireframe desta tela em modo cru e mostre o PNG."
+policy:
+  allow_implicit_invocation: false

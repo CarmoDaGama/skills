@@ -103,7 +103,7 @@ fetch, Canvas e WebGL.
 - Se a porta estiver ocupada, usar a próxima livre.
 - Não expor na rede local.
 - Manter ativo até pedido explícito de encerramento.
-- Registrar estado em /tmp/animate-server.json.
+- Registrar estado em animate-server.json no diretório temporário do sistema.
 
 ## Pacote
 

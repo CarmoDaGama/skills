@@ -87,13 +87,13 @@ Família `fal-ai/moondream3-preview/*` — visão barata para **segmentar layout
 ### CLI (preferir isto)
 
 ```bash
-uv run ~/.agents/skills/fal-ai/scripts/moondream.py detect \
+uv run <this skill>/scripts/moondream.py detect \
   --image path/to/mock.png \
   --prompt "card" \
   --out boxes.json
 
 # multi-prompt (várias classes → um JSON)
-uv run ~/.agents/skills/fal-ai/scripts/moondream.py detect \
+uv run <this skill>/scripts/moondream.py detect \
   --image mock.png \
   --prompt "card" --prompt "button" --prompt "sidebar" \
   --out regions.json --overlay overlay.png
@@ -103,7 +103,7 @@ Outros modos: `query`, `point`, `caption`, `segment` (mesmo script, subcomando).
 
 ```bash
 # máscara pixel-level (+ bbox / SVG path)
-uv run ~/.agents/skills/fal-ai/scripts/moondream.py segment \
+uv run <this skill>/scripts/moondream.py segment \
   --image mock.png --object "card" \
   --out segment.json --mask-out mask.png
 ```

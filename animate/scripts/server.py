@@ -11,16 +11,18 @@ import signal
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-STATE = Path('/tmp/animate-server.json')
-LOG = Path('/tmp/animate-server.log')
+STATE = Path(tempfile.gettempdir()) / 'animate-server.json'
+LOG = Path(tempfile.gettempdir()) / 'animate-server.log'
 HOST = '127.0.0.1'
 DEFAULT_PORT = 4173
+WINDOWS = os.name == 'nt'
 
 
 def read_state() -> dict | None:
@@ -31,6 +33,18 @@ def read_state() -> dict | None:
 
 
 def pid_alive(pid: int) -> bool:
+    if not isinstance(pid, int):
+        return False
+    if WINDOWS:
+        import ctypes
+        kernel32 = ctypes.windll.kernel32
+        handle = kernel32.OpenProcess(0x1000, False, pid)
+        if not handle:
+            return False
+        code = ctypes.c_ulong()
+        ok = kernel32.GetExitCodeProcess(handle, ctypes.byref(code))
+        kernel32.CloseHandle(handle)
+        return bool(ok) and code.value == 259
     try:
         os.kill(pid, 0)
         return True
@@ -77,6 +91,10 @@ def start() -> int:
         return 0
 
     port = available_port()
+    detach = (
+        {'creationflags': subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP}
+        if WINDOWS else {'start_new_session': True}
+    )
     with LOG.open('ab') as log:
         process = subprocess.Popen(
             [sys.executable, str(Path(__file__).resolve()), 'run', '--port', str(port)],
@@ -84,7 +102,7 @@ def start() -> int:
             stdin=subprocess.DEVNULL,
             stdout=log,
             stderr=log,
-            start_new_session=True,
+            **detach,
         )
 
     url = f'http://{HOST}:{port}/'
@@ -99,9 +117,22 @@ def start() -> int:
     return 1
 
 
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self) -> None:
+        if self.path != '/__root':
+            super().do_GET()
+            return
+        body = ROOT.as_posix().encode('utf-8')
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/plain; charset=utf-8')
+        self.send_header('Content-Length', str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+
 def run(port: int) -> int:
     os.chdir(ROOT)
-    server = http.server.ThreadingHTTPServer((HOST, port), http.server.SimpleHTTPRequestHandler)
+    server = http.server.ThreadingHTTPServer((HOST, port), Handler)
     STATE.write_text(json.dumps({
         'pid': os.getpid(),
         'port': port,

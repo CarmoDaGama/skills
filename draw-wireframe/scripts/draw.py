@@ -17,7 +17,6 @@ import argparse
 import html
 import math
 import re
-import shlex
 from pathlib import Path
 
 SCREENS = {'dashboard': (1440, 900, 56), 'site': (1440, 0, 56), 'app': (430, 900, 24)}
@@ -26,6 +25,8 @@ TONES = ['#333333', '#474747', '#5c5c5c', '#6e6e6e', '#7e7e7e']   # the panel an
 FG, FG2, LIGHT = '#8e8e8e', '#767676', '#b4b4b4'                   # text bars, secondary bars, solid elements
 INK, INK2, DARK = '#ececec', '#b9b9b9', '#1c1c1c'                  # real text
 PLAIN = {'row', 'col', 'space'}                                    # containers without a surface
+FLAGS = {'solid', 'ghost', 'bold', 'center', 'muted', 'end', 'knob'}
+TOKEN = re.compile(r'''([a-z]+)=(?:"([^"]*)"|'([^']*)'|(\S*))|"([^"]*)"|'([^']*)'|(\S+)''')
 
 
 class Node:
@@ -60,19 +61,22 @@ def parse(path):
     for raw in Path(path).read_text(encoding='utf-8').splitlines():
         if not raw.strip() or raw.lstrip().startswith('#'):
             continue
-        indent, toks = len(raw) - len(raw.lstrip()), shlex.split(raw.strip())
+        indent = len(raw) - len(raw.lstrip())
+        kind, rest = (raw.split(None, 1) + [''])[:2]
         args, opts = [], {}
-        for t in toks[1:]:
-            if re.fullmatch(r'[a-z]+=.*', t):
-                k, v = t.split('=', 1); opts[k] = v
-            elif re.fullmatch(r'[a-z]+', t) and t in ('solid', 'ghost', 'bold', 'center', 'muted', 'end'):
-                opts[t] = '1'
+        for key, dq, sq, bare, qarg, sarg, word in (m.groups() for m in TOKEN.finditer(rest)):
+            if key:
+                opts[key] = next(v for v in (dq, sq, bare) if v is not None)
+            elif word is None:
+                args.append(qarg if qarg is not None else sarg)
+            elif word in FLAGS:
+                opts[word] = '1'
             else:
-                args.append(t)
-        if toks[0] == 'screen':
+                args.append(word)
+        if kind == 'screen':
             screen = (args[0] if args else 'dashboard', opts)
             continue
-        node = Node(toks[0], args, opts)
+        node = Node(kind, args, opts)
         while stack and stack[-1][0] >= indent:
             stack.pop()
         if stack:
@@ -337,7 +341,7 @@ def p_kpi(c, n, x, y, w, h, d, tone):
 
 def p_bars(c, n, x, y, w, h, d, tone):
     vals = [float(v) for v in n.opts['values'].split(',')] if 'values' in n.opts else [.35 + .55 * abs(math.sin(i * 1.3 + 1)) * (.5 + i / 24) for i in range(int(n.num('n', 12)))]
-    top = max(vals); k = len(vals); bw = w / k * .62
+    top = max(vals) or 1; k = len(vals); bw = w / k * .62
     labels = n.items('labels'); lh = 20 if labels else 0
     for i, v in enumerate(vals):
         bh = (h - lh) * v / top
@@ -348,7 +352,9 @@ def p_bars(c, n, x, y, w, h, d, tone):
 
 def curve(n, x, y, w, h):
     vals = [float(v) for v in n.opts['values'].split(',')] if 'values' in n.opts else [.3, .42, .38, .55, .5, .68, .62, .78, .72, .9]
-    top = max(vals)
+    top = max(vals) or 1
+    if len(vals) == 1:
+        vals = vals * 2
     return [(x + i * w / (len(vals) - 1), y + h - h * v / top * .92) for i, v in enumerate(vals)]
 
 
@@ -510,7 +516,7 @@ def p_tabbar(c, n, x, y, w, h, d, tone):
 
 def p_fan(c, n, x, y, w, h, d, tone):
     # a fanned stack of cards, cut off by the bottom edge of the piece
-    k = int(n.num('n', 4)); cid = f'f{int(x)}{int(y)}'
+    k = int(n.num('n', 4)); cid = f'fan{len(c.out)}'
     c.out.append(f'<clipPath id="{cid}"><rect x="{x:.1f}" y="{y:.1f}" width="{w:.1f}" height="{h:.1f}"/></clipPath><g clip-path="url(#{cid})">')
     cw = w * .5
     for i in range(k):

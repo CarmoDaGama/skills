@@ -73,7 +73,7 @@ Quando um job fornecer `filename`, use o path exatamente como recebido. Não pro
 Para cada job, use:
 
 ```bash
-uv run ~/.agents/skills/openrouter-img/scripts/generate_image.py \
+uv run <this skill>/../openrouter-img/scripts/generate_image.py \
   --prompt "..." \
   --filename "mocks/{cycle}-a.png" \
   --model gpt2 \

@@ -17,25 +17,15 @@ from __future__ import annotations
 import argparse
 import base64
 import json
-import os
 import sys
 import time
 import urllib.error
 import urllib.request
 from pathlib import Path
 
+from keys import key
+
 API = 'https://openrouter.ai/api/v1/images'
-
-
-def key() -> str:
-    if os.environ.get('OPENROUTER_API_KEY'):
-        return os.environ['OPENROUTER_API_KEY']
-    for env in (Path.cwd() / '.env', Path.home() / '.env'):
-        if env.exists():
-            for line in env.read_text(encoding='utf-8').splitlines():
-                if line.strip().startswith('OPENROUTER_API_KEY='):
-                    return line.split('=', 1)[1].strip().strip('"').strip("'")
-    sys.exit('ERROR: set OPENROUTER_API_KEY (environment, .env or ~/.env).')
 
 
 def data_url(p: Path) -> str:
@@ -64,7 +54,7 @@ def main() -> None:
             'input_references': [{'type': 'image_url', 'image_url': {'url': data_url(Path(a.reference))}}]}
     t0 = time.time()
     req = urllib.request.Request(API, data=json.dumps(body).encode(), method='POST',
-                                 headers={'Authorization': f'Bearer {key()}', 'Content-Type': 'application/json'})
+                                 headers={'Authorization': f'Bearer {key("OPENROUTER_API_KEY")}', 'Content-Type': 'application/json'})
     try:
         with urllib.request.urlopen(req, timeout=600) as r:
             data = json.loads(r.read())

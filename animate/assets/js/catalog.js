@@ -1,4 +1,6 @@
-const ROOT = '/Users/rtadewald/.agents/skills/animate';
+const ROOT = await fetch('__root')
+  .then((response) => (response.ok ? response.text() : ''))
+  .catch(() => '');
 
 const MODES = {
   components: { label: 'Componentes', note: 'Componentes animados e interativos para interfaces.', itemLabel: 'componentes' },
@@ -28,7 +30,7 @@ const ANIMATIONS = [
 ].map((item) => ({
   ...item,
   folder: `${item.id.toLowerCase()}-${item.slug}`,
-  path: `${ROOT}/assets/animations/${item.id.toLowerCase()}-${item.slug}/`,
+  path: `${ROOT ? `${ROOT}/` : ''}assets/animations/${item.id.toLowerCase()}-${item.slug}/`,
 }));
 
 const catalog = document.querySelector('#catalog');

@@ -27,6 +27,7 @@ import sys
 from dotenv import load_dotenv
 
 load_dotenv()
+load_dotenv(os.path.expanduser("~/.env"))
 
 DEFAULT_MODEL = {
     "gemini": "gemini-3.1-flash-image-preview",

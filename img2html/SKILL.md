@@ -77,13 +77,14 @@ Follow the order below. Skip a step only when the plan has nothing for it. Detai
 
 **Self-review at the end of every step:**
 
-1. Screenshot: `uv run ~/.agents/skills/video2html/scripts/snap.py <url> review/<step>.png --shot`
+1. Screenshot: `uv run <this skill>/scripts/snap.py <url> review/<step>.png --shot`
 2. Compare the region of the step with the same crop of the image:
-   `uv run ~/.agents/skills/video2html/scripts/compare.py reference.png review/<step>.png review/<step> --regions "name:x,y,w,h"`
+   `uv run <this skill>/scripts/compare.py reference.png review/<step>.png review/<step> --regions "name:x,y,w,h"`
 3. Fix and repeat, **at most 3 rounds**. If something still differs, write it down and move on.
 4. Log the step in `steps.md`: the side-by-side and one line, `ok` or `difference: …`.
 
-(The scripts live in the sibling `video2html` skill: `~/.agents/skills/video2html/scripts/`.)
+(`snap.py` and `compare.py` are copies of the ones in `video2html`; `check.py` at the repository root fails if they
+drift apart.)
 
 ## Step 3 — Deliver
 
@@ -115,7 +116,7 @@ only if the user asks. Serve the folder over `http://` to review it (`python3 -m
 - `OPENROUTER_API_KEY` (generated assets): from the environment, `./.env` or `~/.env`. Never print it.
 - `uv` runs every script. Google Chrome for headless screenshots.
 - Scripts here: `fonts.py` (compare candidate fonts with a crop of the text), `align.py` (put a generated image back
-  in place over the reference). From `video2html/scripts/`: `snap.py`, `compare.py`.
+  in place over the reference), `snap.py` (headless screenshot), `compare.py` (side-by-side and difference per region).
 
 ## Pitfalls
 

@@ -22,12 +22,12 @@ Run the script using absolute path (do NOT cd to skill directory first):
 
 **Generate new image:**
 ```bash
-uv run ~/.agents/skills/nano-banana-pro/scripts/generate_image.py --prompt "your image description" --filename "output-name.png" [--resolution 512|1K|2K|4K] [--api-key KEY]
+uv run <this skill>/scripts/generate_image.py --prompt "your image description" --filename "output-name.png" [--resolution 512|1K|2K|4K] [--api-key KEY]
 ```
 
 **Edit existing image:**
 ```bash
-uv run ~/.agents/skills/nano-banana-pro/scripts/generate_image.py --prompt "editing instructions" --filename "output-name.png" --input-image "path/to/input.png" [--resolution 512|1K|2K|4K] [--api-key KEY]
+uv run <this skill>/scripts/generate_image.py --prompt "editing instructions" --filename "output-name.png" --input-image "path/to/input.png" [--resolution 512|1K|2K|4K] [--api-key KEY]
 ```
 
 **Important:** Always run from the user's current working directory so images are saved where the user is working, not in the skill directory.
@@ -104,15 +104,15 @@ Preserve user's creative intent in both cases.
 
 **Generate new image (default 512):**
 ```bash
-uv run ~/.agents/skills/nano-banana-pro/scripts/generate_image.py --prompt "A serene Japanese garden with cherry blossoms" --filename "2025-11-23-14-23-05-japanese-garden.png"
+uv run <this skill>/scripts/generate_image.py --prompt "A serene Japanese garden with cherry blossoms" --filename "2025-11-23-14-23-05-japanese-garden.png"
 ```
 
 **Generate at higher resolution only when asked:**
 ```bash
-uv run ~/.agents/skills/nano-banana-pro/scripts/generate_image.py --prompt "A serene Japanese garden with cherry blossoms" --filename "2025-11-23-14-23-05-japanese-garden.png" --resolution 2K
+uv run <this skill>/scripts/generate_image.py --prompt "A serene Japanese garden with cherry blossoms" --filename "2025-11-23-14-23-05-japanese-garden.png" --resolution 2K
 ```
 
 **Edit existing image:**
 ```bash
-uv run ~/.agents/skills/nano-banana-pro/scripts/generate_image.py --prompt "make the sky more dramatic with storm clouds" --filename "2025-11-23-14-25-30-dramatic-sky.png" --input-image "original-photo.jpg"
+uv run <this skill>/scripts/generate_image.py --prompt "make the sky more dramatic with storm clouds" --filename "2025-11-23-14-25-30-dramatic-sky.png" --input-image "original-photo.jpg"
 ```

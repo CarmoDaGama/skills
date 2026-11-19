@@ -22,7 +22,7 @@ fáceis de reutilizar, sem converter o catálogo em documentação pesada.
 
 ## Seu objetivo
 
-Mantenha /Users/rtadewald/.agents/skills/animate/ como fonte canônica da
+Mantenha a pasta desta skill (`<this skill>/`) como fonte canônica da
 biblioteca. Preserve IDs e caminhos publicados, a interface compacta de fundo
 branco e a equivalência entre cada demonstração do catálogo e seu pacote isolado.
 
@@ -41,7 +41,7 @@ branco e a equivalência entre cada demonstração do catálogo e seu pacote iso
 Ao receber apenas $animate, execute:
 
 ~~~bash
-python3 /Users/rtadewald/.agents/skills/animate/scripts/server.py start
+python3 <this skill>/scripts/server.py start
 ~~~
 
 Abra a URL retornada. **start** reutiliza o processo existente; não crie um
@@ -50,8 +50,8 @@ segundo servidor. Deixe-o ativo até o usuário pedir para encerrá-lo.
 Use **status** para consultar e **stop** somente sob pedido explícito:
 
 ~~~bash
-python3 /Users/rtadewald/.agents/skills/animate/scripts/server.py status
-python3 /Users/rtadewald/.agents/skills/animate/scripts/server.py stop
+python3 <this skill>/scripts/server.py status
+python3 <this skill>/scripts/server.py stop
 ~~~
 
 ## Organização do catálogo
@@ -148,8 +148,8 @@ explícito para ampliar o escopo.
 Depois de qualquer alteração, execute:
 
 ~~~bash
-python3 /Users/rtadewald/.agents/skills/animate/scripts/validate.py
-python3 /Users/rtadewald/.agents/skills/animate/scripts/server.py start
+python3 <this skill>/scripts/validate.py
+python3 <this skill>/scripts/server.py start
 ~~~
 
 Confirme que as rotas #components e #backgrounds abrem, os filtros funcionam, os

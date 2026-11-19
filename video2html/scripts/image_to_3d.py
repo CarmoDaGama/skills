@@ -15,7 +15,6 @@ from __future__ import annotations
 import argparse
 import base64
 import json
-import os
 import sys
 import time
 import urllib.error
@@ -23,16 +22,7 @@ import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-
-def key() -> str:
-    if os.environ.get('FAL_KEY'):
-        return os.environ['FAL_KEY']
-    for env in (Path.cwd() / '.env', Path.home() / '.env'):
-        if env.exists():
-            for line in env.read_text(encoding='utf-8').splitlines():
-                if line.strip().startswith('FAL_KEY='):
-                    return line.split('=', 1)[1].strip().strip('"').strip("'")
-    sys.exit('ERROR: set FAL_KEY (environment, .env or ~/.env).')
+from keys import key
 
 
 def models(img: str) -> dict[str, tuple[str, dict]]:
@@ -50,7 +40,7 @@ def main() -> None:
     ap.add_argument('out')
     ap.add_argument('--models', default='tripo,trellis2,rodin')
     a = ap.parse_args()
-    k = key()
+    k = key('FAL_KEY')
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     p = Path(a.image)
